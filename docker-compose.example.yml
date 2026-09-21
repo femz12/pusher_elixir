@@ -1,0 +1,24 @@
+services:
+  app:
+    build: .
+    # your existing Laravel app service
+    environment:
+      BROADCAST_CONNECTION: pusher
+      PUSHER_APP_ID: app-id
+      PUSHER_APP_KEY: app-key
+      PUSHER_APP_SECRET: app-secret
+      PUSHER_HOST: pusher-server
+      PUSHER_PORT: 6001
+      PUSHER_SCHEME: http
+    depends_on:
+      - pusher-server
+
+  pusher-server:
+    build: ./pusher_elixir
+    ports:
+      - "6001:6001"
+    environment:
+      PUSHER_APP_ID: app-id
+      PUSHER_APP_KEY: app-key
+      PUSHER_APP_SECRET: app-secret
+      PORT: 6001
