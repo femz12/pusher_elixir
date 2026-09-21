@@ -4,7 +4,12 @@ defmodule PusherServer.WebhookTest do
   @name :webhook_test_instance
 
   setup do
-    PusherServer.Config.resolve(@name, app_key: "testkey", app_secret: "testsecret", app_id: "testid")
+    PusherServer.Config.resolve(@name,
+      app_key: "testkey",
+      app_secret: "testsecret",
+      app_id: "testid"
+    )
+
     :ok
   end
 
@@ -29,7 +34,12 @@ defmodule PusherServer.WebhookTest do
 
   test "two different instances sign with their own independent secrets" do
     other_name = :webhook_test_other_instance
-    PusherServer.Config.resolve(other_name, app_key: "otherkey", app_secret: "othersecret", app_id: "otherid")
+
+    PusherServer.Config.resolve(other_name,
+      app_key: "otherkey",
+      app_secret: "othersecret",
+      app_id: "otherid"
+    )
 
     events = [%{"name" => "channel_occupied", "channel" => "presence-room"}]
     {_body_a, headers_a} = PusherServer.Webhook.build(@name, events)

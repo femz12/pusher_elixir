@@ -46,7 +46,12 @@ defmodule PusherServer.Webhook do
   defp send_webhook(name, url, events) do
     {body, headers} = build(name, events)
 
-    case :httpc.request(:post, {to_charlist(url), headers, ~c"application/json", body}, [{:timeout, 5_000}], []) do
+    case :httpc.request(
+           :post,
+           {to_charlist(url), headers, ~c"application/json", body},
+           [{:timeout, 5_000}],
+           []
+         ) do
       {:ok, {{_version, status, _reason}, _resp_headers, _resp_body}} when status in 200..299 ->
         :ok
 

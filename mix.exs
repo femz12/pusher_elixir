@@ -18,8 +18,9 @@ defmodule PusherServer.MixProject do
       ],
 
       # --- Hex package metadata (fill in before `mix hex.publish`) ---
-      description: "A self-hosted, Pusher-protocol-compatible WebSocket server " <>
-                   "(drop-in for Laravel Reverb) built on Cowboy.",
+      description:
+        "A self-hosted, Pusher-protocol-compatible WebSocket server " <>
+          "(drop-in for Laravel Reverb) built on Cowboy.",
       package: package(),
       docs: docs(),
       source_url: @source_url

@@ -126,7 +126,11 @@ defmodule PusherServer.WsHandler do
     if authorized? do
       do_subscribe(channel, channel_data, state)
     else
-      reply = %{event: "pusher:error", data: %{message: "Invalid signature for channel #{channel}", code: 4009}}
+      reply = %{
+        event: "pusher:error",
+        data: %{message: "Invalid signature for channel #{channel}", code: 4009}
+      }
+
       {:reply, {:text, Jason.encode!(reply)}, state}
     end
   end
@@ -222,7 +226,9 @@ defmodule PusherServer.WsHandler do
               socket_id
             )
 
-            Webhook.dispatch(name, [%{"name" => "member_added", "channel" => channel, "user_id" => user_id}])
+            Webhook.dispatch(name, [
+              %{"name" => "member_added", "channel" => channel, "user_id" => user_id}
+            ])
           end
 
           members = Presence.members(presence_server, channel)
@@ -278,7 +284,9 @@ defmodule PusherServer.WsHandler do
           data: Jason.encode!(%{user_id: user_id})
         })
 
-        Webhook.dispatch(name, [%{"name" => "member_removed", "channel" => channel, "user_id" => user_id}])
+        Webhook.dispatch(name, [
+          %{"name" => "member_removed", "channel" => channel, "user_id" => user_id}
+        ])
 
       _ ->
         :ok

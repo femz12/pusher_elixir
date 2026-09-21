@@ -56,7 +56,10 @@ defmodule PusherServer.Presence do
 
       %{user_id: user_id} ->
         still_present = Enum.any?(chan, fn {_sid, m} -> m.user_id == user_id end)
-        new_state = if chan == %{}, do: Map.delete(state, channel), else: Map.put(state, channel, chan)
+
+        new_state =
+          if chan == %{}, do: Map.delete(state, channel), else: Map.put(state, channel, chan)
+
         {:reply, {not still_present, user_id}, new_state}
     end
   end

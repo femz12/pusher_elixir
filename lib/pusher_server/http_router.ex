@@ -15,9 +15,9 @@ defmodule PusherServer.HttpRouter do
 
   alias PusherServer.{Auth, Config, Naming}
 
-  plug :match
-  plug :fetch_query_params
-  plug :dispatch
+  plug(:match)
+  plug(:fetch_query_params)
+  plug(:dispatch)
 
   # `use Plug.Router` builds its own call/2 via Plug.Builder, which marks
   # it `defoverridable` precisely so per-instance data can be injected
@@ -61,7 +61,8 @@ defmodule PusherServer.HttpRouter do
         encoded = Jason.encode!(%{event: event_name, data: data, channel: channel})
 
         Registry.dispatch(registry, channel, fn entries ->
-          for {pid, _socket_id} <- entries, do: send(pid, {:broadcast, encoded, exclude_socket_id})
+          for {pid, _socket_id} <- entries,
+              do: send(pid, {:broadcast, encoded, exclude_socket_id})
         end)
       end)
 
@@ -84,7 +85,11 @@ defmodule PusherServer.HttpRouter do
 
       info =
         if String.starts_with?(channel, "presence-") do
-          Map.put(base, :user_count, length(PusherServer.Presence.members(Naming.presence(name), channel)))
+          Map.put(
+            base,
+            :user_count,
+            length(PusherServer.Presence.members(Naming.presence(name), channel))
+          )
         else
           base
         end

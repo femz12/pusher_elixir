@@ -16,11 +16,13 @@ defmodule PusherServer.Config do
   def resolve(name, opts) do
     config = %__MODULE__{
       app_key: Keyword.get(opts, :app_key) || System.get_env("PUSHER_APP_KEY", "app-key"),
-      app_secret: Keyword.get(opts, :app_secret) || System.get_env("PUSHER_APP_SECRET", "app-secret"),
+      app_secret:
+        Keyword.get(opts, :app_secret) || System.get_env("PUSHER_APP_SECRET", "app-secret"),
       app_id: Keyword.get(opts, :app_id) || System.get_env("PUSHER_APP_ID", "app-id"),
       port: Keyword.get(opts, :port) || String.to_integer(System.get_env("PORT", "6001")),
       webhook_url: Keyword.get(opts, :webhook_url) || System.get_env("PUSHER_WEBHOOK_URL"),
-      client_messages_enabled: Keyword.get(opts, :client_messages_enabled, env_client_messages_enabled?())
+      client_messages_enabled:
+        Keyword.get(opts, :client_messages_enabled, env_client_messages_enabled?())
     }
 
     :persistent_term.put({__MODULE__, name}, config)

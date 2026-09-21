@@ -4,7 +4,12 @@ defmodule PusherServer.AuthTest do
   @name :auth_test_instance
 
   setup do
-    PusherServer.Config.resolve(@name, app_key: "testkey", app_secret: "testsecret", app_id: "testid")
+    PusherServer.Config.resolve(@name,
+      app_key: "testkey",
+      app_secret: "testsecret",
+      app_id: "testid"
+    )
+
     :ok
   end
 
@@ -23,7 +28,13 @@ defmodule PusherServer.AuthTest do
     end
 
     test "rejects a tampered signature" do
-      refute PusherServer.Auth.valid_channel_auth?(@name, "123.456", "private-orders", nil, "testkey:deadbeef")
+      refute PusherServer.Auth.valid_channel_auth?(
+               @name,
+               "123.456",
+               "private-orders",
+               nil,
+               "testkey:deadbeef"
+             )
     end
 
     test "rejects a missing auth string" do
@@ -43,7 +54,13 @@ defmodule PusherServer.AuthTest do
 
       assert PusherServer.Auth.valid_channel_auth?(@name, socket_id, channel, channel_data, auth)
       # same auth string but different channel_data must not validate
-      refute PusherServer.Auth.valid_channel_auth?(@name, socket_id, channel, "{\"different\":true}", auth)
+      refute PusherServer.Auth.valid_channel_auth?(
+               @name,
+               socket_id,
+               channel,
+               "{\"different\":true}",
+               auth
+             )
     end
   end
 
@@ -51,7 +68,13 @@ defmodule PusherServer.AuthTest do
     test "accepts a properly signed REST trigger request" do
       method = "POST"
       path = "/apps/testid/events"
-      params = %{"auth_key" => "testkey", "auth_timestamp" => "1", "auth_version" => "1.0", "body_md5" => "abc"}
+
+      params = %{
+        "auth_key" => "testkey",
+        "auth_timestamp" => "1",
+        "auth_version" => "1.0",
+        "body_md5" => "abc"
+      }
 
       string_to_sign =
         params
@@ -59,7 +82,9 @@ defmodule PusherServer.AuthTest do
         |> Enum.map_join("&", fn {k, v} -> "#{k}=#{v}" end)
         |> then(&"#{method}\n#{path}\n#{&1}")
 
-      sig = :crypto.mac(:hmac, :sha256, "testsecret", string_to_sign) |> Base.encode16(case: :lower)
+      sig =
+        :crypto.mac(:hmac, :sha256, "testsecret", string_to_sign) |> Base.encode16(case: :lower)
+
       full = Map.put(params, "auth_signature", sig)
 
       assert PusherServer.Auth.valid_request_signature?(@name, method, path, full)
@@ -67,7 +92,13 @@ defmodule PusherServer.AuthTest do
 
     test "rejects a request with a tampered auth_signature" do
       params = %{"auth_key" => "testkey", "auth_signature" => "0000"}
-      refute PusherServer.Auth.valid_request_signature?(@name, "POST", "/apps/testid/events", params)
+
+      refute PusherServer.Auth.valid_request_signature?(
+               @name,
+               "POST",
+               "/apps/testid/events",
+               params
+             )
     end
 
     test "rejects a request where a query param was modified after signing" do
@@ -81,7 +112,9 @@ defmodule PusherServer.AuthTest do
         |> Enum.map_join("&", fn {k, v} -> "#{k}=#{v}" end)
         |> then(&"#{method}\n#{path}\n#{&1}")
 
-      sig = :crypto.mac(:hmac, :sha256, "testsecret", string_to_sign) |> Base.encode16(case: :lower)
+      sig =
+        :crypto.mac(:hmac, :sha256, "testsecret", string_to_sign) |> Base.encode16(case: :lower)
+
       tampered = params |> Map.put("auth_timestamp", "2") |> Map.put("auth_signature", sig)
 
       refute PusherServer.Auth.valid_request_signature?(@name, method, path, tampered)
