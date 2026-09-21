@@ -1,3 +1,35 @@
-/_build
-/.elixir_ls
-/deps
+# Build artifacts
+/_build/
+/deps/
+/doc/assets/generated
+/doc/extras/generated
+/doc/out/
+/.fetch
+erl_crash.dump
+*.ez
+.elixir_ls/
+/.lexical/
+savrr-*.tar
+savrr.iml
+
+# Test/CI artifacts
+.sobelow
+/cover/
+/tmp/
+
+# Frontend Assets, Uploads, Sitemaps
+/priv/static/assets/
+/priv/static/uploads/
+/priv/static/cache_manifest.json
+/assets/node_modules/
+npm-debug.log
+
+# Local configs
+.envrc
+.direnv
+.iex.exs
+/config/dev.local.exs
+/secrets
+
+# OS temporary files (should be in your global .gitgnore)
+.DS_Store
